@@ -2,7 +2,7 @@ import argparse
 import math
 import random
 import sys
-from collections import namedtuple
+from dataclasses import dataclass
 from typing import Final, Literal
 
 
@@ -21,9 +21,13 @@ namespace = parser.parse_args(sys.argv[1:])
 m: Final[int] = 15 if namespace.number_of_values is None else namespace.number_of_values
 a: Final[int] = 0 if namespace.start is None else namespace.start
 b: Final[int] = 1 if namespace.end is None else namespace.end
+EPSILON: Final[float] = 1e-12
 
 
-TableValue = namedtuple('TableValue', ['x', 'f_x'])
+@dataclass(slots=True)
+class TableValue:
+    x: float
+    f_x: float
 
 
 def print_header():
@@ -34,6 +38,10 @@ def print_header():
         "   f(x)=exp(-x) – x²/2         a=0     b=1     x=0,65\n"
         "   xⱼ=a+j·(b-a)/m   j=0,1..m    n=7     m=15\n"
     )
+
+
+def test_f(x: float) -> float:
+    return 5 * x**2 - 10 * x - 9
 
 
 def f(x: float) -> float:
@@ -51,7 +59,7 @@ def get_interpolation_point() -> float:
 
 def get_degree_of_interpolation_polynomial() -> int:
     try:
-        n = int(input(">>> Введите степень интерполяционного многочлена n≤m;    n="))
+        n = int(input(f">>> Введите степень интерполяционного многочлена n≤m={m};    n="))
     except ValueError:
         n: int = 7
         print(f"Оставлено значение n по умолчанию;   n={n}")
@@ -71,13 +79,13 @@ def get_table_of_function_values() -> list[TableValue]:
 
 
 def print_table_of_function_values(table: list[TableValue]) -> None:
-    print("    Таблица значений   ")
-    print("┌╴╴╴╴╴╴╴╴╴╴╴╴╴┬╴╴╴╴╴╴╴╴╴╴╴╴╴┐")
-    print("╎      x      ╎     f(x)    ╎")
-    print("├╴╴╴╴╴╴╴╴╴╴╴╴╴┼╴╴╴╴╴╴╴╴╴╴╴╴╴┤")
+    print("       Таблица значений      ")
+    print("┌╴╴╴╴╴╴╴╴╴╴╴╴╴╴┬╴╴╴╴╴╴╴╴╴╴╴╴╴╴┐")
+    print("╎       x      ╎      f(x)    ╎")
+    print("├╴╴╴╴╴╴╴╴╴╴╴╴╴╴┼╴╴╴╴╴╴╴╴╴╴╴╴╴╴┤")
     for table_value in table:
-        print(f"╎{table_value.x:^ 11.9f} ╎{table_value.f_x:^ 11.9f} ╎")
-    print("└╴╴╴╴╴╴╴╴╴╴╴╴╴┴╴╴╴╴╴╴╴╴╴╴╴╴╴┘")
+        print(f"╎{table_value.x:^ 13.9f} ╎{table_value.f_x:^ 13.9f} ╎")
+    print("└╴╴╴╴╴╴╴╴╴╴╴╴╴╴┴╴╴╴╴╴╴╴╴╴╴╴╴╴╴┘")
 
 
 def sort_table_by_dist_from_point(table: list[TableValue], x: float):
@@ -94,7 +102,7 @@ def omega(x: float, k: int, x_table_values: list[float]):
 
 def lagrange_interpolate(table: list[TableValue], n: int, x: float) -> float:
     value_of_polynomial: float = 0
-    x_table_values = list(map(lambda value: value[0], table[:n + 1]))
+    x_table_values = list(map(lambda value: value.x, table[:n + 1]))
     for k in range(n + 1):
         value_of_polynomial += table[k].f_x * omega(x, k, x_table_values) / omega(x_table_values[k], k, x_table_values)
     return value_of_polynomial
@@ -108,7 +116,7 @@ def get_multiply(x: float, k: int, x_table_values: list[float]):
 
 
 def newton_interpolate(table: list[TableValue], n: int, x: float) -> float:
-    x_table_values = list(map(lambda value: value[0], table[:n + 1]))
+    x_table_values = list(map(lambda value: value.x, table[:n + 1]))
     divided_differences_table = [[] for _ in range(n + 1)]
     for i in range(n+1):
         divided_differences_table[0].append(table[i].f_x)
