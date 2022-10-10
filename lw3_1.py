@@ -188,7 +188,6 @@ def get_results(table: list[TableValue]):
 def main():
     try:
         print_header()
-        get_table_of_function_values()
         table = get_table_of_function_values()
         print_table_of_function_values(table)
         get_results(table)
