@@ -15,6 +15,15 @@ def print_header():
           f"   A = 0   B = 1   n = 2   ρ(x) = sqrt(1-x)   f(x) = e^x\n")
 
 
+def get_input(value_name: str, msg: str, default_value: float) -> float:
+    try:
+        value = float(input(f">>> Введите {msg} {value_name}="))
+    except ValueError:
+        value: float = default_value
+        print(f"Оставлено значение {value_name} по умолчанию;   {value_name}={default_value}")
+    return value
+
+
 def custom_tabulate(arr: np.ndarray | list, char: str, pres: int = 2, note: str = ''):
     indexes = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉']
     headers = list(map(lambda index: char + index, indexes))
@@ -71,6 +80,7 @@ def secants_method(segment: Segment, f: Callable):
 
 def print_results(n: int, a: float, b: float):
     # Task 1
+    print("\n――――――――――――task 1――――――――――――――")
     integral_value = quad(func=(lambda x: np.multiply(function(x), pho(x))), a=a, b=b)[0]
     print(f"Точное значение интеграла: {integral_value:.12f}")
 
@@ -79,30 +89,29 @@ def print_results(n: int, a: float, b: float):
 
     # Task 3
     print("\n――――――――――――task 3――――――――――――――")
-    print(custom_tabulate(x_values, 'x', 2, ' 🡬 узлы КФ'))
+    print(custom_tabulate(x_values, 'x', 2, ' ↖ узлы КФ'))
 
     x_matrix = np.array([np.power(x_values, degree) for degree in range(n + 1)])
     mu_values = [quad(func=(lambda x: np.multiply(np.power(x, i), pho(x))), a=a, b=b)[0] for i in range(n + 1)]
-    print(custom_tabulate(mu_values, 'μ', 5, ' 🡬 моменты весовой функции'))
+    print(custom_tabulate(mu_values, 'μ', 5, ' ↖ моменты весовой функции'))
 
     a_values = np.linalg.solve(x_matrix, mu_values)
-    print(custom_tabulate(a_values, 'A', 5, ' 🡬 коэффициенты КФ'))
+    print(custom_tabulate(a_values, 'A', 5, ' ↖ коэффициенты КФ'))
 
     approximate_value = sum([a_i * function(x_i) for a_i, x_i in zip(a_values, x_values)])
-    print(f"Значение интеграла, полученное вычислением квадратур = {approximate_value:.8f}")
-    print(f"Фактическая погрешность = {abs(integral_value - approximate_value):.8f}")
+    print(f"Значение интеграла, полученное вычислением квадратур = {approximate_value:.12f}")
+    print(f"Фактическая погрешность = {abs(integral_value - approximate_value):.12f}")
 
     # Task 5
     print("\n――――――――――――task 5――――――――――――――")
-    print(custom_tabulate(x_values, 'x', 2, ' 🡬 узлы КФ'))
 
     mu_values = [quad(func=(lambda x: np.multiply(np.power(x, i), pho(x))), a=a, b=b)[0] for i in range(n * 2)]
-    print(custom_tabulate(mu_values, 'μ', 5, ' 🡬 моменты весовой функции'))
+    print(custom_tabulate(mu_values, 'μ', 5, ' ↖ моменты весовой функции'))
 
     mu_matrix_left = [list(reversed(mu_values[i:n + i])) for i in range(n)]
     mu_matrix_right = list(map(lambda mu: -mu, mu_values[n:n * 2]))
     a_values: np.ndarray = np.array([1, *np.linalg.solve(mu_matrix_left, mu_matrix_right)])
-    print(custom_tabulate(a_values, 'a', 5, ' 🡬 коэффициенты a₀xⁿ + a₁xⁿ⁻¹ + ··· + aₙ₋₁x + aₙ = 0'))
+    print(custom_tabulate(a_values, 'a', 5, ' ↖ коэффициенты a₀xⁿ + a₁xⁿ⁻¹ + ··· + aₙ₋₁x + aₙ = 0'))
 
     def monomial(x: np.float64, degree: int, a_i: np.float64) -> np.float64:
         return np.multiply(np.power(x, degree), a_i)
@@ -112,15 +121,15 @@ def print_results(n: int, a: float, b: float):
 
     segments = function_tabulation(n * 10, a, b, polynomial)
     roots = [secants_method(segment, polynomial) for segment in segments]
-    print(custom_tabulate(roots, 'root', 5, ' 🡬 корни xⁿ + a₁xⁿ⁻¹ + ··· + aₙ₋₁x + aₙ = 0'))
+    print(custom_tabulate(roots, 'x', 5, ' ↖ корни xⁿ + a₁xⁿ⁻¹ + ··· + aₙ₋₁x + aₙ = 0'))
 
     x_matrix = [[root_i ** degree for root_i in roots] for degree in range(n)]
     csf_values = np.linalg.solve(x_matrix, mu_values[:n])
-    print(custom_tabulate(csf_values, 'A', 5, ' 🡬 коэффициенты КФ'))
+    print(custom_tabulate(csf_values, 'A', 5, ' ↖ коэффициенты КФ'))
 
     approximate_value = sum([a_i * function(x_i) for a_i, x_i in zip(csf_values, roots)])
-    print(f"Значение интеграла, полученное по формуле типа Гаусса = {approximate_value:.8f}")
-    print(f"Фактическая погрешность = {abs(integral_value - approximate_value):.8f}")
+    print(f"Значение интеграла, полученное по формуле типа Гаусса = {approximate_value:.12f}")
+    print(f"Фактическая погрешность = {abs(integral_value - approximate_value):.12f}")
 
 
 def main():
@@ -130,7 +139,28 @@ def main():
     namespace = parser.parse_args(sys.argv[1:])
     n = 2 if namespace.number_of_nodes is None else namespace.number_of_nodes
 
-    print_results(n, 0, 1)
+    choice = '1'
+    try:
+        while True:
+            if choice == '1':
+                a = get_input('A', 'нижний предел интегрирования', 0)
+                b = get_input('B', 'верхний предел интегрирования', 1)
+                if a >= b:
+                    print(f"❌ A должно быть строго меньше, чем B...")
+                    continue
+                if b > 1:
+                    print(f"❌ Отрезок интегрирования не принадлежит области определения ρ(x) = sqrt(1-x)...")
+                    continue
+                print_results(n, a, b)
+            else:
+                print(f"Выход из программы...")
+                break
+            choice = input(">>> Напишите \"1\", если хотите ввести новые значения:   ")
+    except (Exception, KeyboardInterrupt):
+        print(f"Ошибка!\nВыход из программы...")
+        return
+
+
 
 
 if __name__ == "__main__":

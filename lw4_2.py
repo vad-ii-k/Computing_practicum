@@ -87,12 +87,12 @@ def print_results(a: float, b: float, functions: [Callable, Callable, str], poly
     for function, integral, formula in polynomials + functions:
         print(f" Функция f(x) = {formula}")
         value_of_integral = integral(b) - integral(a)
-        print(f" Точное значение интеграла: {round(value_of_integral, 6)}\n")
+        print(f" Точное значение интеграла: {value_of_integral:.8f}\n")
         for method in [LeftRectangle, RightRectangle, MiddleRectangle, Trapeze, Simpson, ThreeEighths]:
             print(f"   Метод: {method.name}")
             result = method.calculate(function, a, b)
-            print(f"    Результат метода: {round(result, 6)}")
-            print(f"    Абсолютная фактическая погрешность: {round(abs(value_of_integral - result), 6)}\n")
+            print(f"    Результат метода: {result:.8f}")
+            print(f"    Абсолютная фактическая погрешность: {abs(value_of_integral - result):.8f}\n")
         print("――――――――――――――――――――――――――――――――――――――――――――――――")
 
 

@@ -8,7 +8,7 @@ def print_header():
     print("Задание #4.1. Приближенное вычисление определённых интегралов\n"
           "Вариант 7\n"
           "Исходные параметры задачи:\n"
-          f"   A = 0   B = 0   ρ(x) = sqrt(1-x)   f(x) = e^x\n")
+          f"   A = 0   B = 1   ρ(x) = sqrt(1-x)   f(x) = e^x\n")
 
 
 def print_results():
@@ -19,7 +19,7 @@ def print_results():
         return np.exp(x)
 
     integral_value = quad(func=(lambda x: np.multiply(function(x), pho(x))), a=0, b=1)[0]
-    print(f"Точное значение интеграла: {integral_value:8f}")
+    print(f"Точное значение интеграла: {integral_value:.8f}")
     x_values = np.array([0, 0.5, 1])
     [print(f"Узел x{index} = {x}") for x, index in zip(x_values, ['₀', '₁', '₂'])]
     mu_values = [quad(func=(lambda x: np.multiply(np.power(x, i), pho(x))), a=0, b=1)[0] for i in range(3)]

@@ -109,16 +109,16 @@ def print_results_3(a: float, b: float, m: int, functions: list[FunctionInfo], p
         middle_values_table = get_values_table(function_info.function, middle_points)
         print(f" Функция f(x) = {function_info.representation}")
         value_of_integral = function_info.integral(b) - function_info.integral(a)
-        print(f" Точное значение интеграла: {round(value_of_integral, 6)}\n")
+        print(f" Точное значение интеграла: {value_of_integral:.8f}\n")
         for method in methods:
             print(f"   Метод: {method.name}")
             result = method.calculate(values_table, h, middle_values_table=middle_values_table)
-            print(f"    Результат метода: {result:.4f}")
-            print(f"    Абсолютная фактическая погрешность: {abs(value_of_integral - result):.6f}")
+            print(f"    Результат метода: {result:.8f}")
+            print(f"    Абсолютная фактическая погрешность: {abs(value_of_integral - result):.8f}")
             print(f"    Относительная фактическая погрешность: "
-                  f"{(abs(value_of_integral - result) / abs(value_of_integral) * 100):.4f}%")
+                  f"{(abs(value_of_integral - result) / abs(value_of_integral) * 100):.7f}%")
             f_max = max(*list(map(abs, get_values_table(function_info.derivatives[method.ast], points))))
-            print(f"    Теоретическая погрешность: {method.const * f_max * (b - a) * (h ** (method.ast + 1))}\n")
+            print(f"    Теоретическая погрешность: {(method.const * f_max * (b - a) * (h ** (method.ast + 1))):.8f}\n")
         print("――――――――――――――――――――――――――――――――――――――――――――――――")
 
 
@@ -141,19 +141,19 @@ def print_results_4(a: float, b: float, m: int, k: int, functions: list[Function
 
         print(f" Функция f(x) = {function_info.representation}")
         j = function_info.integral(b) - function_info.integral(a)
-        print(f" Точное значение интеграла: {round(j, 6)}\n")
+        print(f" Точное значение интеграла: {j:.8f}\n")
         for method in methods:
             print(f"   Метод: {method.name}")
             j_h = method.calculate(values_table, h, middle_values_table=middle_values_table)
             j_h_l = method.calculate(values_table_l, h_l, middle_values_table=middle_values_table_l)
-            print(f"    Результат метода: {j_h_l:.4f}")
-            print(f"    Абсолютная фактическая погрешность: {abs(j - j_h_l):.6f}")
+            print(f"    Результат метода: {j_h_l:.8f}")
+            print(f"    Абсолютная фактическая погрешность: {abs(j - j_h_l):.8f}")
             f_max = max(*list(map(abs, get_values_table(function_info.derivatives[method.ast], points_l))))
-            print(f"    Теоретическая погрешность: {method.const * f_max * (b - a) * (h ** (method.ast + 1))}")
+            print(f"    Теоретическая погрешность: {(method.const * f_max * (b - a) * (h ** (method.ast + 1))):.8f}")
             j_middle = (k ** (method.ast + 1) * j_h_l - j_h) / (k ** (method.ast + 1) - 1)
-            print(f"    Значение интеграла, уточнённое по принципу Рунге: {j_middle:.4f}")
-            print(f"    Абсолютная фактическая погрешность после уточнения: {abs(j - j_middle):.6f}")
-            print(f"    Относительная фактическая погрешность: {(abs(j - j_middle) / abs(j) * 100):.4f}%\n")
+            print(f"    Значение интеграла, уточнённое по принципу Рунге: {j_middle:.8f}")
+            print(f"    Абсолютная фактическая погрешность после уточнения: {abs(j - j_middle):.8f}")
+            print(f"    Относительная фактическая погрешность: {(abs(j - j_middle) / abs(j) * 100):.7f}%\n")
         print("――――――――――――――――――――――――――――――――――――――――――――――――")
 
 
