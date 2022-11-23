@@ -2,6 +2,7 @@ import argparse
 import math
 import sys
 
+from scipy.integrate import quad
 from tabulate import tabulate
 
 from lw5_helpers import FunctionInfo, add_match_highlighting
@@ -14,7 +15,7 @@ def print_header():
 
 
 def get_mehler_results(f: FunctionInfo, n: int):
-    print(f"\nВычисление интеграла ∫{f.representation}dx при помощи КФ Мелера")
+    print(f"Вычисление интеграла ∫{f.representation}dx при помощи КФ Мелера")
 
     roots = [math.cos((2 * k - 1) * math.pi / (2 * n)) for k in range(1, n + 1)]
     coefficient = math.pi / n
@@ -26,22 +27,21 @@ def get_mehler_results(f: FunctionInfo, n: int):
     print(tabulate(results_table, "keys", "mixed_outline", numalign="center", floatfmt=f".12f", showindex=True))
 
     mehler_value = coefficient * sum([f.function(x_k) for x_k in roots])
-    print(f"Значение интеграла, полученное при помощи КФ Мелера: {mehler_value:.12f} при N={n}")
+    print(f"Значение интеграла, полученное при помощи КФ Мелера: {mehler_value:.12f} при N={n}\n")
     return mehler_value
 
 
 def print_results(list_of_n: list[int]):
-    mehler_function = FunctionInfo(
-        function=lambda x: math.exp(2 * x) * x ** 2,
-        representation="(exp(2x) · x^2 / √(1 - x²))"
-    )
+    mehler_function = FunctionInfo(lambda x: math.exp(2 * x) * x ** 2, representation="(exp(2x) · x^2 / √(1 - x²))")
     mehler_results = [get_mehler_results(mehler_function, n) for n in list_of_n]
 
+    accurate_value = quad(func=lambda x: mehler_function.function(x) / math.sqrt(1 - x ** 2), a=-1, b=1)[0]
     print(f"\nРезультаты по Мелеру для ∫{mehler_function.representation}dx")
     results_table = {
         "N": list_of_n,
-        "с подсветкой": add_match_highlighting(mehler_results),
-        "без подсветки": mehler_results,
+        "С подсветкой": add_match_highlighting(mehler_results),
+        "Без подсветки": mehler_results,
+        "Фактическая погрешность": list(map(lambda x: f"{abs(accurate_value - x):.15f}", mehler_results))
     }
     print(tabulate(results_table, "keys", "mixed_outline", numalign="center", stralign="center", disable_numparse=True))
 

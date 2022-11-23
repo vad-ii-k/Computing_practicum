@@ -51,7 +51,6 @@ def secants_method(segment: Segment, f: Callable):
 class FunctionInfo:
     function: Callable
     representation: str
-    integral: Callable = None
 
 
 def add_match_highlighting(arr: list[float]) -> list[str]:
@@ -64,6 +63,32 @@ def add_match_highlighting(arr: list[float]) -> list[str]:
         else:
             arr_with_highlighting.append(f"\33[44m{current_value[:matcher.size]}\33[0m{current_value[matcher.size:]}")
     return arr_with_highlighting
+
+
+def print_warning(message: str, error: bool = True):
+    if error:
+        print(f"   \33[43m! {message} !\33[0m")
+    else:
+        print(f"   \33[42m! {message} !\33[0m")
+
+
+def check_roots(roots: list[float]):
+    for root in roots:
+        if -1 >= root or root >= 1:
+            print_warning('LEGENDRE ROOT OUTSIDE INTERVAL (-1, 1)')
+    for i in range(len(roots) // 2):
+        if abs(roots[i] + roots[len(roots) - 1]) >= 1e12:
+            print_warning(f'ROOTS ARE NOT SYMMETRICAL: {roots[i]} != {roots[len(roots) - 1]}')
+
+
+def check_coefficients(coefficients: list[float]):
+    for coefficient in coefficients:
+        if coefficient <= 0:
+            print_warning('GAUSS COEFFICIENT Cₖ <= 0')
+    for i in range(len(coefficients) // 2):
+        if abs(coefficients[i] - coefficients[len(coefficients) - 1]) > 1e12:
+            print_warning(f'COEFFICIENTS ARE NOT SYMMETRICAL: '
+                          f'{coefficients[i]} != {coefficients[len(coefficients) - 1]}')
 
 
 def create_parser():
