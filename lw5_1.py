@@ -1,11 +1,11 @@
 import argparse
 import sys
-from dataclasses import dataclass
-from typing import Callable
 
 import numpy as np
 from scipy.integrate import quad
 from tabulate import tabulate
+
+from lw5_helpers import function_tabulation, secants_method, get_input
 
 
 def print_header():
@@ -13,15 +13,6 @@ def print_header():
           "Вариант 7\n"
           "Исходные параметры задачи:\n"
           f"   A = 0   B = 1   n = 2   ρ(x) = sqrt(1-x)   f(x) = e^x\n")
-
-
-def get_input(value_name: str, msg: str, default_value: float) -> float:
-    try:
-        value = float(input(f">>> Введите {msg} {value_name}="))
-    except ValueError:
-        value: float = default_value
-        print(f"Оставлено значение {value_name} по умолчанию;   {value_name}={default_value}")
-    return value
 
 
 def custom_tabulate(arr: np.ndarray | list, char: str, pres: int = 2, note: str = ''):
@@ -42,40 +33,6 @@ def create_parser():
     args_parser = argparse.ArgumentParser()
     args_parser.add_argument('-n', '--number_of_nodes', type=int, help="Number of nodes")
     return args_parser
-
-
-@dataclass(slots=True, frozen=True)
-class Segment:
-    start: float
-    end: float
-
-
-def function_tabulation(n: int, a: float, b: float, f: Callable) -> list[Segment]:
-    h = (b - a) / n
-    x1 = a
-    x2 = x1 + h
-    y1 = f(x1)
-    segments = list()
-    while x2 <= b:
-        y2 = f(x2)
-        if y1 * y2 <= 0:
-            segments.append(Segment(x1, x2))
-        x1 = x2
-        x2 = x1 + h
-        y1 = y2
-    return segments
-
-
-def secants_method(segment: Segment, f: Callable):
-    x_prev = segment.start
-    x_k = segment.end
-    while True:
-        x_next = x_k - (f(x_k) / (f(x_k) - f(x_prev))) * (x_k - x_prev)
-        if abs(x_k - x_prev) < 1e-10 or x_k == x_next:
-            break
-        x_prev = x_k
-        x_k = x_next
-    return x_k
 
 
 def print_results(n: int, a: float, b: float):
@@ -159,8 +116,6 @@ def main():
     except (Exception, KeyboardInterrupt):
         print(f"Ошибка!\nВыход из программы...")
         return
-
-
 
 
 if __name__ == "__main__":
