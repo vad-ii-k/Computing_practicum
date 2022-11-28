@@ -4,6 +4,7 @@ import sys
 from distutils.util import strtobool
 from typing import Callable
 
+from scipy.integrate import quad
 from tabulate import tabulate
 
 from lw5_1 import function_tabulation, secants_method
@@ -79,6 +80,9 @@ def print_results(n: int, m: int, a: int, b: int, verbose: bool) -> float:
     gauss_result = sum(gauss_results)
     print(f"\nРезультат по Гауссу для ∫{gauss_function.representation}dx на [{a:.2f}, {b:.2f}] при N={n} и m={m}: \t"
           f"{gauss_result:.13f}")
+
+    accurate_value = quad(func=lambda x: gauss_function.function(x), a=a, b=b)[0]
+    print(f"Фактическая погрешность: {abs(accurate_value - gauss_result):.15f}")
     return gauss_result
 
 

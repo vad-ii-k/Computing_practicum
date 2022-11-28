@@ -16,7 +16,13 @@ def print_header():
 
 
 def custom_tabulate(arr: np.ndarray | list, char: str, pres: int = 2, note: str = ''):
-    indexes = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉']
+    replacements = {'0': '₀', '1': '₁', '2': '₂', '3': '₃', '4': '₄', '5': '₆', '6': '₅', '7': '₇', '8': '₈', '9': '₉'}
+    indexes = list()
+    for i in range(len(arr)):
+        new_index = str(i)
+        for k, v in replacements.items():
+            new_index = new_index.replace(k, v)
+        indexes.append(new_index)
     headers = list(map(lambda index: char + index, indexes))
     return tabulate([arr], headers=headers, tablefmt="mixed_outline", numalign="center", floatfmt=f".{pres}f") + note
 
@@ -85,8 +91,8 @@ def print_results(n: int, a: float, b: float):
     print(custom_tabulate(csf_values, 'A', 5, ' ↖ коэффициенты КФ'))
 
     approximate_value = sum([a_i * function(x_i) for a_i, x_i in zip(csf_values, roots)])
-    print(f"Значение интеграла, полученное по формуле типа Гаусса = {approximate_value:.12f}")
-    print(f"Фактическая погрешность = {abs(integral_value - approximate_value):.12f}")
+    print(f"Значение интеграла, полученное по формуле типа Гаусса = {approximate_value:.14f}")
+    print(f"Фактическая погрешность = {abs(integral_value - approximate_value):.14f}")
 
 
 def main():

@@ -38,10 +38,8 @@ def function_tabulation(n: int, a: float, b: float, f: Callable) -> list[Segment
 def secants_method(segment: Segment, f: Callable):
     x_prev = segment.start
     x_k = segment.end
-    while True:
+    while abs(x_k - x_prev) > 1e-10 and x_k != x_prev:
         x_next = x_k - (f(x_k) / (f(x_k) - f(x_prev))) * (x_k - x_prev)
-        if abs(x_k - x_prev) < 1e-12 or x_k == x_next:
-            break
         x_prev = x_k
         x_k = x_next
     return x_k

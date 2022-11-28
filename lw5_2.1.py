@@ -75,8 +75,8 @@ def print_results(list_of_n: list[int], a: float, b: float):
         print_warning("TESTING...", error=False)
         degree = 2 * max(list_of_n) - 1
         polynomial = FunctionInfo(lambda x: x ** degree / 999 + 2 * x ** degree + 0.5 * x, "polynomial")
-        polynomial_result = get_gauss_results(polynomial, max(list_of_n), a, b)
-        polynomial_accurate = quad(func=lambda x: polynomial.function(x), a=a, b=b)[0]
+        polynomial_result = get_gauss_results(polynomial, max(list_of_n), 0, 1)
+        polynomial_accurate = quad(func=lambda x: polynomial.function(x), a=0, b=1)[0]
         if abs(polynomial_accurate - polynomial_result) > 1e8:
             print_warning("TESTING ON A POLYNOMIAL FAILED")
             print(abs(polynomial_accurate - polynomial_result))
@@ -98,7 +98,6 @@ def print_results(list_of_n: list[int], a: float, b: float):
         "Фактическая погрешность": list(map(lambda x: f"{abs(accurate_value - x):.15f}", gauss_results))
     }
     print(tabulate(results_table, "keys", "mixed_outline", numalign="center", stralign="center", disable_numparse=True))
-
 
 
 def create_parser():
