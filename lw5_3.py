@@ -7,8 +7,15 @@ from typing import Callable
 from scipy.integrate import quad
 from tabulate import tabulate
 
-from lw5_1 import function_tabulation, secants_method
-from lw5_helpers import FunctionInfo, get_input, print_warning, check_coefficients, check_roots
+from lw5_helpers import (
+    FunctionInfo,
+    get_input,
+    print_warning,
+    check_coefficients,
+    check_roots,
+    function_tabulation,
+    secants_method
+)
 
 
 def print_header():
